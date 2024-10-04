@@ -12,7 +12,7 @@ namespace EmployeeManagement.Mvc.Controllers
         {
             _employeeService = employeeService;
         }
-
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var employees = await _employeeService.GetAllEmployeesAsync();
