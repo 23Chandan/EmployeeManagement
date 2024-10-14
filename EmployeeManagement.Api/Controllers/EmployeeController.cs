@@ -1,5 +1,6 @@
 ﻿using EmployeeManagement.Core.Entities;
 using EmployeeManagement.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.Api.Controllers
