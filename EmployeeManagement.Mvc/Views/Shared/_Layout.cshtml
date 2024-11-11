@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EmployeeManagement.Mvc.styles.css" asp-append-version="true" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css" />
-
 </head>
 <body>
     <header>
@@ -28,6 +27,8 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <!-- Countdown Timer Display -->
+                    <span id="countdownTimer" class="navbar-text text-dark" style="font-weight: bold;"></span>
                 </div>
             </div>
         </nav>
@@ -43,11 +44,43 @@
             &copy; 2024 - EmployeeManagement.Mvc - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Countdown Timer Script -->
+    <script>
+        debugger
+        document.addEventListener("DOMContentLoaded", function () {
+            const expiryTime = new Date();
+            const loginMessage = '@ViewBag.LoginMessage';
+            if (loginMessage === 'Login successful') {
+                
+                expiryTime.setMinutes(expiryTime.getMinutes() + 20);
+            }
+            const timerElement = document.getElementById("countdownTimer");
+
+            function updateTimer() {
+                const now = new Date();
+                const timeLeft = expiryTime - now;
+
+                if (timeLeft > 0) {
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    timerElement.textContent = `Session expires in ${minutes}m ${seconds}s`;
+                } else {
+                    timerElement.textContent = "Session expired";
+                    clearInterval(timerInterval);
+                }
+            }
+
+            const timerInterval = setInterval(updateTimer, 1000);
+            updateTimer(); // Initial call to display timer immediately
+        });
+    </script>
 </body>
 </html>

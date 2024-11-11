@@ -59,7 +59,8 @@ namespace EmployeeManagement.Api.Controllers
 
             if (result.Succeeded)
             {
-                return Ok(new { message = "Login successful"});
+                var token = GenerateJwtToken(model.Email);
+                return Ok(new { message = "Login successful", token = token });
             }
             return Unauthorized(new { message = "Invalid login attempt" });
         }
@@ -74,7 +75,7 @@ namespace EmployeeManagement.Api.Controllers
                 {
             new Claim(ClaimTypes.Name, username)
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(2),
+                Expires = DateTime.UtcNow.AddMinutes(20),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = "yourdomain.com",
                 Audience = "yourdomain.com"

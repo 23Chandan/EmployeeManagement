@@ -17,6 +17,7 @@ namespace EmployeeManagement.Api.Controllers
         }
 
         // This method retrieves all employees
+        [Authorize]
         [HttpGet] // Responds to GET requests at 'api/Employee'
         public async Task<ActionResult<IEnumerable<Employee>>> GetAllEmployees()
         {

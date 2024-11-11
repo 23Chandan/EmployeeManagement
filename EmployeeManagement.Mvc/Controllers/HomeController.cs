@@ -15,6 +15,15 @@ namespace EmployeeManagement.Mvc.Controllers
 
         public IActionResult Index()
         {
+            var loginMessage = HttpContext.Session.GetString("LoginMessage");
+
+            
+            if (string.IsNullOrEmpty(loginMessage))
+            {
+                return RedirectToAction("LogInPage", "User");
+            }
+
+            ViewData["LoginMessage"] = loginMessage;
             return View();
         }
 
