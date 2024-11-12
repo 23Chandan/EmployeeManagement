@@ -3,6 +3,7 @@ using EmployeeManagement.Mvc.Services;
 using System.Threading.Tasks;
 using EmployeeManagement.Mvc.Models;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace EmployeeManagement.Mvc.Controllers
 {
@@ -34,8 +35,9 @@ namespace EmployeeManagement.Mvc.Controllers
                 if(responseData.message == "Login successful")
                 {
                     HttpContext.Session.SetString("LoginMessage", "Login successful");
-                }             
-                return RedirectToAction("Index", "Home");
+                }
+                HttpContext.Session.SetString("JWTToken", (string)responseData.token);
+                return RedirectToAction("Index", "Employee");
             }
             else
             {

@@ -15,6 +15,15 @@ namespace EmployeeManagement.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var loginMessage = HttpContext.Session.GetString("LoginMessage");
+
+
+            if (string.IsNullOrEmpty(loginMessage))
+            {
+                return RedirectToAction("LogInPage", "User");
+            }
+
+            ViewData["LoginMessage"] = loginMessage;
             var employees = await _employeeService.GetAllEmployeesAsync();
             return View(employees);
         }
