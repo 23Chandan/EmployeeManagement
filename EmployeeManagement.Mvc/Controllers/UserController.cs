@@ -41,7 +41,7 @@ namespace EmployeeManagement.Mvc.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt");
+                ViewData["ErrorMessage"] = "UserName or password incorrect";
             }
             return View(formData);
         }

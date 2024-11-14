@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.Api.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("api/[controller]")] // Route will be 'api/Employee'
+    [Route("api/[controller]")] 
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
@@ -15,55 +16,68 @@ namespace EmployeeManagement.Api.Controllers
         {
             _employeeService = employeeService;
         }
-
-        // This method retrieves all employees
-        [Authorize]
-        [HttpGet] // Responds to GET requests at 'api/Employee'
+        
+        [HttpGet] 
         public async Task<ActionResult<IEnumerable<Employee>>> GetAllEmployees()
         {
             var employees = await _employeeService.GetAllEmployeesAsync();
-            return Ok(employees); // Return a 200 OK response with the list of employees
+            return Ok(employees); 
         }
 
-        // This method retrieves an employee by id
-        [HttpGet("{id}")] // Responds to GET requests at 'api/Employee/{id}'
+        [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
-            var employee = await _employeeService.GetEmployeeByIdAsync(id);
-            if (employee == null)
+            try
             {
-                return NotFound(); // Return 404 Not Found if employee does not exist
+                var employee = await _employeeService.GetEmployeeByIdAsync(id);
+                if (employee == null)
+                {
+                    return NotFound();
+                }
+                return Ok(employee);
             }
-            return Ok(employee); // Return the employee if found
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
-        // This method adds a new employee
-        [HttpPost] // Responds to POST requests at 'api/Employee'
+
+        [HttpPost] 
         public async Task<ActionResult<Employee>> AddEmployee([FromBody] Employee employee)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             await _employeeService.AddEmployeeAsync(employee);
-            return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employee); // Return 201 Created with location of the new employee
+            return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employee); 
         }
 
-        // This method updates an existing employee
-        [HttpPut("{id}")] // Responds to PUT requests at 'api/Employee/{id}'
+        [HttpPut("{id}")] 
         public async Task<IActionResult> UpdateEmployee(int id, [FromBody] Employee employee)
         {
             if (id != employee.Id)
             {
-                return BadRequest(); // Return 400 Bad Request if id in the URL does not match the employee's id
+                return BadRequest(); 
             }
 
             await _employeeService.UpdateEmployeeAsync(employee);
-            return NoContent(); // Return 204 No Content if the update is successful
+            return NoContent(); 
         }
 
-        // This method deletes an employee
-        [HttpDelete("{id}")] // Responds to DELETE requests at 'api/Employee/{id}'
-        public async Task<IActionResult> DeleteEmployee(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Employee>> DeleteEmployee(int id)
         {
+            var employee = await _employeeService.GetEmployeeByIdAsync(id);
+            if (employee == null)
+            {
+                return NotFound($"Employee with ID {id} not found.");
+            }
+
             await _employeeService.DeleteEmployeeAsync(id);
-            return NoContent(); // Return 204 No Content if the deletion is successful
-        }
+            return Ok(employee);
+        }       
+
     }
 }

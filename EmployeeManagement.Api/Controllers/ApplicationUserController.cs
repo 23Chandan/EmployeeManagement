@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.Core.Entities.ApplicationUserEntities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -13,16 +14,17 @@ namespace EmployeeManagement.Api.Controllers
     [ApiController]
     public class ApplicationUserController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
-        public ApplicationUserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public ApplicationUserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _configuration = configuration;
         }
-
-        // POST: api/ApplicationUser/Register
+        [Authorize]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterApplicationUserModel model)
         {
@@ -48,7 +50,6 @@ namespace EmployeeManagement.Api.Controllers
             return BadRequest(ModelState);
         }
 
-        // POST: api/ApplicationUser/Login
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LogInApplicationUser model)
         {
@@ -62,12 +63,15 @@ namespace EmployeeManagement.Api.Controllers
                 var token = GenerateJwtToken(model.Email);
                 return Ok(new { message = "Login successful", token = token });
             }
-            return Unauthorized(new { message = "Invalid login attempt" });
+            else
+            {
+                return Ok(new { message = " UserName or password incorrect"});
+            }
         }
         private string GenerateJwtToken(string username)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes("ThisIsA32CharactersLongSecretKey!!");  // 32 characters
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]);  
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -75,10 +79,10 @@ namespace EmployeeManagement.Api.Controllers
                 {
             new Claim(ClaimTypes.Name, username)
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(20),
+                Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = "yourdomain.com",
-                Audience = "yourdomain.com"
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"]
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
