@@ -24,7 +24,7 @@ namespace EmployeeManagement.Api.Controllers
             return Ok(employees); 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetEmployee/{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
             try
@@ -43,7 +43,7 @@ namespace EmployeeManagement.Api.Controllers
         }
 
 
-        [HttpPost] 
+        [HttpPost("AddEmployee")]
         public async Task<ActionResult<Employee>> AddEmployee([FromBody] Employee employee)
         {
             if (!ModelState.IsValid)
@@ -51,13 +51,13 @@ namespace EmployeeManagement.Api.Controllers
                 return BadRequest(ModelState);
             }
             await _employeeService.AddEmployeeAsync(employee);
-            return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employee); 
+            return Ok(); 
         }
 
-        [HttpPut("{id}")] 
-        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] Employee employee)
+        [HttpPut("UpdateEmployee")] 
+        public async Task<IActionResult> UpdateEmployee([FromBody] Employee employee)
         {
-            if (id != employee.Id)
+            if (employee.Id == null)
             {
                 return BadRequest(); 
             }
@@ -66,7 +66,7 @@ namespace EmployeeManagement.Api.Controllers
             return NoContent(); 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteEmployee/{id}")]
         public async Task<ActionResult<Employee>> DeleteEmployee(int id)
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);

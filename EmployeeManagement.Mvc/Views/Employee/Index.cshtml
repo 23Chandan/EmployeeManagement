@@ -13,6 +13,8 @@
             <th>State</th>
             <th>Zip</th>
             <th>Joining Date</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
@@ -27,6 +29,8 @@
                 <td>@employee.State</td>
                 <td>@employee.Zip</td>
                 <td>@employee.JoiningDate.ToShortDateString()</td>
+                <td><a asp-controller="Employee" asp-action="GetEmployeeById" asp-route-Id="@employee.Id">Edit</a></td>
+                <td><a asp-controller="Employee" asp-action="DeleteEmployee" asp-route-Id="@employee.Id">Delete</a></td>
             </tr>
         }
     </tbody>
@@ -88,13 +92,7 @@
                 <label for="JoiningDate">Joining Date</label>
                 <input type="date" class="form-control" id="JoiningDate" name="JoiningDate" required placeholder="Joining Date" />
             </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                <label>&nbsp;</label> <!-- Blank label for aligning the button -->
-                <button type="submit" class="btn btn-primary form-control">Add Employee</button>
-            </div>
-        </div>
+        </div>        
     </div>
     <div class="row">
         <div class="col-sm-4">
@@ -105,14 +103,8 @@
         </div>
         <div class="col-sm-4">
             <div class="form-group">
-                <label for="City">City</label>
-                <input type="text" class="form-control" id="City" name="City" required placeholder="City" />
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                <label for="State">State</label>
-                <input type="text" class="form-control" id="State" name="State" required placeholder="State" />
+                <label>&nbsp;</label> 
+                <button type="submit" class="btn btn-primary form-control">Add Employee</button>
             </div>
         </div>
     </div>

@@ -22,6 +22,16 @@ namespace EmployeeManagement.Mvc.Services
             return responseData;
 
         }
-        
+        public async Task<string> SignInResponse(SignInApplicationUserDto modalData)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(modalData), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("http://localhost:5008/api/ApplicationUser/Register", content);
+            response.EnsureSuccessStatusCode();
+            var responseData = await response.Content.ReadAsStringAsync();
+
+            return responseData;
+
+        }
+
     }
 }

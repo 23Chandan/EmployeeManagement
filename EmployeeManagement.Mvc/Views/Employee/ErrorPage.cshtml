@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Error Page";
+}
+
+<div class="container mt-5">
+    <div class="alert alert-danger text-center">
+        <h2>Error @ViewBag.ErrorCode</h2>
+        <p>@ViewBag.ErrorMessage</p>
+        <a href="@Url.Action("Index", "Employee")" class="btn btn-primary">Back to Home</a>
+    </div>
+</div>

@@ -1,0 +1,76 @@
+﻿@model EmployeeManagement.Mvc.Models.EmployeeDTo;
+
+<h2>Add Employee</h2>
+<form asp-action="UpdateEmployee" method="post">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="FirstName">First Name</label>
+                <input asp-for="FirstName" type="text" class="form-control" name="FirstName" placeholder="First Name" />
+                <input asp-for="Id" type="hidden" class="form-control" name="Id" placeholder="First Name" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="MiddleName">Middle Name</label>
+                <input asp-for="MiddleName"  type="text" class="form-control" id="MiddleName" name="MiddleName" required placeholder="Middle Name" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="LastName">Last Name</label>
+                <input asp-for="LastName"  type="text" class="form-control" id="LastName" name="LastName" required placeholder="Last Name" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="Address1">Address 1</label>
+                <input asp-for="Address1"  type="text" class="form-control" id="Address1" name="Address1" required placeholder="Address 1" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="City">City</label>
+                <input asp-for="City"  type="text" class="form-control" id="City" name="City" required placeholder="City" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="State">State</label>
+                <input asp-for="State" type="text" class="form-control" id="State" name="State" required placeholder="State" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="Zip">Zip Code</label>
+                <input asp-for="Zip" type="text" class="form-control" id="Zip" name="Zip" required placeholder="Zip Code" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="JoiningDate">Joining Date</label>
+                <input asp-for="JoiningDate" type="date" class="form-control" id="JoiningDate" name="JoiningDate" required placeholder="Joining Date" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="Address2">Address 2</label>
+                <input asp-for="Address2" type="text" class="form-control" id="Address2" name="Address2" required placeholder="Address 1" />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary form-control">Add Employee</button>
+            </div>
+        </div>
+    </div>
+</form>

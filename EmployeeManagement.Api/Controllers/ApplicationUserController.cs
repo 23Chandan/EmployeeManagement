@@ -24,7 +24,7 @@ namespace EmployeeManagement.Api.Controllers
             _signInManager = signInManager;
             _configuration = configuration;
         }
-        [Authorize]
+        //[Authorize]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterApplicationUserModel model)
         {

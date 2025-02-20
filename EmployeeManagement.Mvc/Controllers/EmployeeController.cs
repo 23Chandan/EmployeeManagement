@@ -33,10 +33,54 @@ namespace EmployeeManagement.Mvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _employeeService.CreateEmployeeAsync(employee);
-                return RedirectToAction(nameof(Index));
+                var result = await _employeeService.CreateEmployeeAsync(employee);
+
+                if (!result.IsSuccess)
+                {
+                    TempData["ErrorMessage"] = result.ErrorMessage;
+                    TempData["ErrorCode"] = result.StatusCode;
+                    return RedirectToAction("ErrorPage");
+                }
+
+                return RedirectToAction("Index");
             }
+
             return View(employee);
+        }
+
+        public IActionResult ErrorPage()
+        {
+            ViewBag.ErrorMessage = TempData["ErrorMessage"];
+            ViewBag.ErrorCode = TempData["ErrorCode"];
+            return View();
+        }
+        public async Task<IActionResult> GetEmployeeById(int Id)
+        {
+            var data = await _employeeService.GetEmployeesAByIdAsync(Id);
+            return View(data);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateEmployee(EmployeeDTo data)
+        {
+            var result = await _employeeService.UpdateEmployee(data);
+            if (!result.IsSuccess)
+            {
+                TempData["ErrorMessage"] = result.ErrorMessage;
+                TempData["ErrorCode"] = result.StatusCode;
+                return RedirectToAction("ErrorPage");
+            }
+            return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> DeleteEmployee(int Id)
+        {
+            var result = await _employeeService.DeleteEmployee(Id);
+            if (!result.IsSuccess)
+            {
+                TempData["ErrorMessage"] = result.ErrorMessage;
+                TempData["ErrorCode"] = result.StatusCode;
+                return RedirectToAction("ErrorPage");
+            }
+            return RedirectToAction("Index");
         }
     }
 }
