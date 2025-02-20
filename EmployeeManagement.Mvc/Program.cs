@@ -1,3 +1,4 @@
+using EmployeeManagement.Core.MiddleWares;
 using EmployeeManagement.Mvc.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,18 +37,10 @@ builder.Services.AddHttpClient<UserServices>(client =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-}
-
 app.UseStaticFiles();
-
 app.UseSession();
-
 app.UseRouting();
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthorization();
 
 app.MapControllerRoute(

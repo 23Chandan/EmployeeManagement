@@ -17,12 +17,14 @@ namespace EmployeeManagement.Api.Controllers
         private readonly IConfiguration _configuration;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public ApplicationUserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+        public ApplicationUserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _roleManager = roleManager;
         }
         //[Authorize]
         [HttpPost("Register")]
@@ -40,6 +42,16 @@ namespace EmployeeManagement.Api.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                if (!string.IsNullOrEmpty(model.Role))
+                {
+                    var roleExists = await _roleManager.RoleExistsAsync(model.Role);
+                    if (!roleExists)
+                    {
+                        return BadRequest(new { message = "Role does not exist" });
+                    }
+
+                    await _userManager.AddToRoleAsync(user, model.Role);
+                }
                 return Ok(new { message = "User registered successfully" });
             }
 
@@ -47,6 +59,7 @@ namespace EmployeeManagement.Api.Controllers
             {
                 ModelState.AddModelError("", error.Description);
             }
+            
             return BadRequest(ModelState);
         }
 
@@ -57,10 +70,11 @@ namespace EmployeeManagement.Api.Controllers
                 return BadRequest(ModelState);
 
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (result.Succeeded)
             {
-                var token = GenerateJwtToken(model.Email);
+                var roles = await _userManager.GetRolesAsync(user);
+                var token = GenerateJwtToken(model.Email, roles);
                 return Ok(new { message = "Login successful", token = token });
             }
             else
@@ -68,17 +82,23 @@ namespace EmployeeManagement.Api.Controllers
                 return Ok(new { message = " UserName or password incorrect"});
             }
         }
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(string username, IList<string> roles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]);  
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, username)
+            };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-            new Claim(ClaimTypes.Name, username)
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = _configuration["Jwt:Issuer"],

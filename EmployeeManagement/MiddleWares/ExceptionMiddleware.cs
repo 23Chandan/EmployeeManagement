@@ -17,47 +17,30 @@ namespace EmployeeManagement.Core.MiddleWares
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+        public ExceptionMiddleware(RequestDelegate next)
         {
             _next = next;
-            _logger = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
             try
             {
-                await _next(context); // Proceed with the request pipeline
+                await _next(context);
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException)
             {
-                _logger.LogError(ex, $"An unexpected error occurred: {ex.Message}");
-                await HandleExceptionAsync(context, ex); // Handle the exception
+                context.Response.Redirect("/Error/AccessDenied");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Forbidden)
+            {
+                context.Response.Redirect("/Error/AccessDenied");
+            }
+            catch (Exception)
+            {
+                context.Response.Redirect("/Error/GeneralError");
             }
         }
-
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
-        {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            // Choose response based on environment
-            var errorDetails = new ErrorDetails
-            {
-                StatusCode = (int)HttpStatusCode.InternalServerError,
-                Message = "An internal server error occurred.",
-                Details = exception.ToString()
-            };              
-            var errorJson = JsonSerializer.Serialize(errorDetails);
-            return context.Response.WriteAsync(errorJson);
-        }
-    }
-
-    public class ErrorDetails
-    {
-        public int StatusCode { get; set; }
-        public string Message { get; set; }
-        public string Details { get; set; } // Optional for internal exception messages
     }
 }
