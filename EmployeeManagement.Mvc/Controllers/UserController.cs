@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using EmployeeManagement.Mvc.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Mvc.Controllers
 {
@@ -35,6 +37,16 @@ namespace EmployeeManagement.Mvc.Controllers
                 if(responseData.message == "Login successful")
                 {
                     HttpContext.Session.SetString("LoginMessage", "Login successful");
+                    var userClaims = JwtHelper.DecodeJwtToken($"{responseData.token}");
+                    string userId = userClaims.ContainsKey("unique_name") ? userClaims["unique_name"] : "Unknown";
+                    string userRole = userClaims.ContainsKey("role") ? userClaims["role"] : "Unknown";
+                    HttpContext.Session.SetString("UserName", userId);
+                    HttpContext.Session.SetString("UserRole", userRole);
+
+                    string expirationUnixTime = userClaims.ContainsKey("exp") ? userClaims["exp"] : "0";
+                    var expirationDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expirationUnixTime)).UtcDateTime;
+                    HttpContext.Session.SetString("TokenExpiry", expirationDateTimeUtc.ToString("o"));
+
                 }
                 HttpContext.Session.SetString("JWTToken", (string)responseData.token);
                 return RedirectToAction("Index", "Employee");

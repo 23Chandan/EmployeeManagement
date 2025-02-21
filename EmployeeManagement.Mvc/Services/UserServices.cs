@@ -17,8 +17,7 @@ namespace EmployeeManagement.Mvc.Services
             var content = new StringContent(JsonConvert.SerializeObject(modalData), Encoding.UTF8,"application/json");
             var response = await _httpClient.PostAsync("http://localhost:5008/api/ApplicationUser/Login", content);
             response.EnsureSuccessStatusCode();
-            var responseData = await response.Content.ReadAsStringAsync();
-
+            var responseData = await response.Content.ReadAsStringAsync();            
             return responseData;
 
         }

@@ -2,6 +2,7 @@
 using EmployeeManagement.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Api.Controllers
 {
@@ -15,11 +16,14 @@ namespace EmployeeManagement.Api.Controllers
         {
             _employeeService = employeeService;
         }
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         [HttpGet] 
         public async Task<ActionResult<IEnumerable<Employee>>> GetAllEmployees()
         {
-            var employees = await _employeeService.GetAllEmployeesAsync();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; 
+            var userName = User.Identity?.Name; 
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value; 
+            var employees = await _employeeService.GetAllEmployeesAsync();  
             return Ok(employees); 
         }
         [Authorize]

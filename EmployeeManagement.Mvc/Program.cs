@@ -1,4 +1,5 @@
 using EmployeeManagement.Core.MiddleWares;
+using EmployeeManagement.Mvc.MiddleWare;
 using EmployeeManagement.Mvc.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,11 +37,11 @@ builder.Services.AddHttpClient<UserServices>(client =>
 });
 
 var app = builder.Build();
-
+app.UseMiddleware<ExceptionMiddleware>();
+//app.UseMiddleware<SessionExpirationMiddleware>();
 app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
-app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthorization();
 
 app.MapControllerRoute(

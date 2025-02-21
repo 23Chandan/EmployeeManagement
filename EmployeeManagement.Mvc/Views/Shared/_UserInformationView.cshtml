@@ -1,0 +1,48 @@
+﻿@{
+    var userId = Context.Session.GetString("UserId") ?? "N/A";
+    var userName = Context.Session.GetString("UserName") ?? "N/A";
+    var userRole = Context.Session.GetString("UserRole") ?? "N/A";
+    var tokenExpiry = Context.Session.GetString("TokenExpiry") ?? "";
+}
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span id="countdown">Loading...</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+        <li><strong>User ID:</strong> @userId</li>
+        <li><strong>Username:</strong> @userName</li>
+        <li><strong>Role:</strong> @userRole</li>
+        <li class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" asp-controller="User" asp-action="Logout">Logout</a></li>
+    </ul>
+</li>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var expiryTimeStr = "@tokenExpiry";
+        if (!expiryTimeStr) return;
+
+        // Parse ISO format time correctly
+        var expiryTime = new Date(expiryTimeStr).getTime();
+
+        function updateCountdown() {
+            var now = new Date().getTime();
+            var timeLeft = expiryTime - now;
+
+            if (timeLeft <= 0) {
+                document.getElementById("countdown").innerText = "Session Expired";
+                window.location.href = "/User/LogInPage";
+                return;
+            }
+
+            var minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+            var seconds = Math.floor((timeLeft / 1000) % 60);
+            document.getElementById("countdown").innerText = minutes + "m " + seconds + "s";
+
+            setTimeout(updateCountdown, 1000);
+        }
+
+        updateCountdown();
+    });
+</script>
