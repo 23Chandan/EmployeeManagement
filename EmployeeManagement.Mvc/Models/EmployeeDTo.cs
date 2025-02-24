@@ -17,4 +17,13 @@
         public bool HasLeft { get; set; }
         public DateTime? LeavingDate { get; set; }
     }
+    public class RoleDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+    public class DepartmentDto
+    {
+        public string Name { get; set; }
+    }
 }

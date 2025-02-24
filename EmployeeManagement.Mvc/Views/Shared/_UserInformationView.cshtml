@@ -4,12 +4,14 @@
     var userRole = Context.Session.GetString("UserRole") ?? "N/A";
     var tokenExpiry = Context.Session.GetString("TokenExpiry") ?? "";
 }
+<style>
 
+</style>
 <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <span id="countdown">Loading...</span>
     </a>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="width:200px;">
         <li><strong>User ID:</strong> @userId</li>
         <li><strong>Username:</strong> @userName</li>
         <li><strong>Role:</strong> @userRole</li>

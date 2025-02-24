@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -26,7 +27,13 @@ namespace EmployeeManagement.Api.Controllers
             _configuration = configuration;
             _roleManager = roleManager;
         }
-        //[Authorize]
+        [HttpGet("roleList")]
+        public async Task<IActionResult> RoleList()
+        {
+            var role = await _roleManager.Roles.ToArrayAsync();
+            return Ok(role);
+        }
+        [Authorize(Roles ="Admin")]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterApplicationUserModel model)
         {
@@ -71,6 +78,7 @@ namespace EmployeeManagement.Api.Controllers
 
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
             var user = await _userManager.FindByEmailAsync(model.Email);
+            
             if (result.Succeeded)
             {
                 var roles = await _userManager.GetRolesAsync(user);
@@ -99,7 +107,7 @@ namespace EmployeeManagement.Api.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(2),
+                Expires = DateTime.UtcNow.AddMinutes(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = _configuration["Jwt:Issuer"],
                 Audience = _configuration["Jwt:Audience"]

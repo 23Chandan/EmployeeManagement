@@ -1,0 +1,38 @@
+﻿@model IEnumerable<EmployeeManagement.Mvc.Models.EmployeeDTo>
+@{
+    var userRole = Context.Session.GetString("UserRole") ?? "";
+}
+<h4>Employee List</h4>
+<table class="table table-straped">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>Last Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Joining Date</th>
+            <th>Edit</th>
+            <th style="display: @(userRole == "Admin" ? "block" : "none");">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FirstName</td>
+                <td>@employee.MiddleName</td>
+                <td>@employee.LastName</td>
+                <td>@employee.Address1</td>
+                <td>@employee.City</td>
+                <td>@employee.State</td>
+                <td>@employee.Zip</td>
+                <td>@employee.JoiningDate.ToShortDateString()</td>
+                <td><a asp-controller="Employee" asp-action="GetEmployeeById" asp-route-Id="@employee.Id">Edit</a></td>
+                <td><a asp-controller="Employee" asp-action="DeleteEmployee" asp-route-Id="@employee.Id" style="display: @(userRole == "Admin" ? "block" : "none");">Delete</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

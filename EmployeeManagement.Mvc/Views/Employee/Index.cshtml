@@ -1,114 +1,20 @@
 ﻿@model IEnumerable<EmployeeManagement.Mvc.Models.EmployeeDTo>
-@{var userRole = Context.Session.GetString("UserRole") ?? "";}
-<h1>Employee List</h1>
-
-<table class="table table-straped">
-    <thead>
-        <tr>
-            <th>First Name</th>
-            <th>Middle Name</th>
-            <th>Last Name</th>
-            <th>Address</th>
-            <th>City</th>
-            <th>State</th>
-            <th>Zip</th>
-            <th>Joining Date</th>
-            <th>Edit</th>
-            <th style="display: @(userRole == "Admin" ? "block" : "none");">Delete</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var employee in Model)
-        {
-            <tr>
-                <td>@employee.FirstName</td>
-                <td>@employee.MiddleName</td>
-                <td>@employee.LastName</td>
-                <td>@employee.Address1</td>
-                <td>@employee.City</td>
-                <td>@employee.State</td>
-                <td>@employee.Zip</td>
-                <td>@employee.JoiningDate.ToShortDateString()</td>
-                <td><a asp-controller="Employee" asp-action="GetEmployeeById" asp-route-Id="@employee.Id">Edit</a></td>
-                <td><a asp-controller="Employee" asp-action="DeleteEmployee" asp-route-Id="@employee.Id" style="display: @(userRole == "Admin" ? "block" : "none");">Delete</a></td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<div style="display: @(userRole == "Admin" ? "block" : "none");">
-    <h2>Add Employee</h2>
-    <form asp-action="Create" method="post">
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="FirstName">First Name</label>
-                    <input type="text" class="form-control" id="FirstName" name="FirstName" required placeholder="First Name" />
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="MiddleName">Middle Name</label>
-                    <input type="text" class="form-control" id="MiddleName" name="MiddleName" required placeholder="Middle Name" />
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="LastName">Last Name</label>
-                    <input type="text" class="form-control" id="LastName" name="LastName" required placeholder="Last Name" />
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="Address1">Address 1</label>
-                    <input type="text" class="form-control" id="Address1" name="Address1" required placeholder="Address 1" />
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="City">City</label>
-                    <input type="text" class="form-control" id="City" name="City" required placeholder="City" />
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="State">State</label>
-                    <input type="text" class="form-control" id="State" name="State" required placeholder="State" />
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="Zip">Zip Code</label>
-                    <input type="text" class="form-control" id="Zip" name="Zip" required placeholder="Zip Code" />
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="JoiningDate">Joining Date</label>
-                    <input type="date" class="form-control" id="JoiningDate" name="JoiningDate" required placeholder="Joining Date" />
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label for="Address1">Address 2</label>
-                    <input type="text" class="form-control" id="Address2" name="Address2" required placeholder="Address 1" />
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="form-group">
-                    <label>&nbsp;</label>
-                    <button type="submit" class="btn btn-primary form-control">Add Employee</button>
-                </div>
-            </div>
-        </div>
-    </form>
+<style>
+    .card {
+        margin: auto;
+        margin-top: 50px;
+        max-width: auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }   
+</style>
+<div class="row">
+    <div class="col-md-6 card">
+        @await Html.PartialAsync("_EmployeeListPV", Model)
+    </div>
+    <div class="col-md-6 card">
+        @await Html.PartialAsync("_AddNewEmployeePV", Model)
+    </div>
 </div>
-

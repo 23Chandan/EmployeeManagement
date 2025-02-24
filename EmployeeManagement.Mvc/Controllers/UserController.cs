@@ -18,9 +18,10 @@ namespace EmployeeManagement.Mvc.Controllers
             _userServices = userServices;
         }
 
-        public IActionResult LogInPage()
+        public async Task<IActionResult> LogInPage()
         {
-            return View();
+            var roleList = await _userServices.GetRoleList();
+            return View(roleList);
         }
 
         [HttpPost]
@@ -84,6 +85,11 @@ namespace EmployeeManagement.Mvc.Controllers
                 ViewData["ErrorMessage"] = "UserName or password incorrect";
             }
             return View(formData);
+        }
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("LogInPage");
         }
     }
 }

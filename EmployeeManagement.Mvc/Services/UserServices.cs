@@ -31,6 +31,13 @@ namespace EmployeeManagement.Mvc.Services
             return responseData;
 
         }
+        public async Task<IEnumerable<RoleDto>> GetRoleList()
+        {
+            var response = await _httpClient.GetAsync("http://localhost:5008/api/ApplicationUser/roleList");
+            response.EnsureSuccessStatusCode();
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<IEnumerable<RoleDto>>(jsonResponse);
+        }
 
     }
 }
