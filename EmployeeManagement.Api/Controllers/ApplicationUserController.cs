@@ -82,6 +82,10 @@ namespace EmployeeManagement.Api.Controllers
             if (result.Succeeded)
             {
                 var roles = await _userManager.GetRolesAsync(user);
+                if (!roles.Contains(model.Role))
+                {
+                    return Ok(new { message = "Invalid Role Selected" });
+                }
                 var token = GenerateJwtToken(model.Email, roles);
                 return Ok(new { message = "Login successful", token = token });
             }

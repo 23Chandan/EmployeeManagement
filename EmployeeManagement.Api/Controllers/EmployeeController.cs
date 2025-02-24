@@ -16,7 +16,7 @@ namespace EmployeeManagement.Api.Controllers
         {
             _employeeService = employeeService;
         }
-        [Authorize(Roles = "User,Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet] 
         public async Task<ActionResult<IEnumerable<Employee>>> GetAllEmployees()
         {
