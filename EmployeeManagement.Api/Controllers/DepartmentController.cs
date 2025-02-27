@@ -14,6 +14,7 @@ namespace EmployeeManagement.Api.Controllers
             _services = departmentServices;
         }
         [Route("getDepartment")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Department>>> GetDepartment()
         {
             var departmentList = await _services.GetAllDepartment();

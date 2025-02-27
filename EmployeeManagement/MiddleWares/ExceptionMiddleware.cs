@@ -37,7 +37,7 @@ namespace EmployeeManagement.Core.MiddleWares
             {
                 context.Response.Redirect("/Error/AccessDenied");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 context.Response.Redirect("/Error/GeneralError");
             }

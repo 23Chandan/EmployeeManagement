@@ -33,7 +33,7 @@ namespace EmployeeManagement.Api.Controllers
             var role = await _roleManager.Roles.ToArrayAsync();
             return Ok(role);
         }
-        [Authorize(Roles ="Admin")]
+        //[Authorize(Roles ="Admin")]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterApplicationUserModel model)
         {

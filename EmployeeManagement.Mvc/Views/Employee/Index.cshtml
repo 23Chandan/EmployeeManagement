@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<EmployeeManagement.Mvc.Models.EmployeeDTo>
+@{
+    var userRole = Context.Session.GetString("UserRole") ?? "";
+}
 <style>
     .card {
         margin: auto;
@@ -14,7 +17,7 @@
     <div class="col-md-6 card">
         @await Html.PartialAsync("_EmployeeListPV", Model)
     </div>
-    <div class="col-md-6 card">
+    <div class="col-md-6 card" style="display: @(userRole == "Admin" ? "block" : "none");">
         @await Html.PartialAsync("_AddNewEmployeePV", Model)
     </div>
 </div>

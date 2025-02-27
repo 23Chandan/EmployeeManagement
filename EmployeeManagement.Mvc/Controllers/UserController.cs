@@ -21,21 +21,28 @@ namespace EmployeeManagement.Mvc.Controllers
         public async Task<IActionResult> LogInPage()
         {
             var roleList = await _userServices.GetRoleList();
-            return View(roleList);
+            var viewModel = new LogInViewModel
+            {
+                RoleList = roleList
+            };
+            return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> LogInPage(LogInApplicationUserDto formData)
+        public async Task<IActionResult> LogInPage(LogInViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(formData);
+                viewModel.RoleList = await _userServices.GetRoleList();
+                return View(viewModel);
             }
-            var loginResponse = await _userServices.LogInResponse(formData);
+
+            var loginResponse = await _userServices.LogInResponse(viewModel.LogInData);
             var responseData = JsonConvert.DeserializeObject<dynamic>(loginResponse);
+
             if (responseData != null && responseData.token != null)
             {
-                if(responseData.message == "Login successful")
+                if (responseData.message == "Login successful")
                 {
                     HttpContext.Session.SetString("LoginMessage", "Login successful");
                     var userClaims = JwtHelper.DecodeJwtToken($"{responseData.token}");
@@ -47,30 +54,40 @@ namespace EmployeeManagement.Mvc.Controllers
                     string expirationUnixTime = userClaims.ContainsKey("exp") ? userClaims["exp"] : "0";
                     var expirationDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expirationUnixTime)).UtcDateTime;
                     HttpContext.Session.SetString("TokenExpiry", expirationDateTimeUtc.ToString("o"));
-
                 }
+
                 HttpContext.Session.SetString("JWTToken", (string)responseData.token);
                 return RedirectToAction("Index", "Employee");
             }
-            else
-            {
-                ViewData["ErrorMessage"] = "UserName or password incorrect";
-            }
-            return View(formData);
+
+            //ViewData["ErrorMessage"] = (string)responseData.message;
+            ModelState.AddModelError("LogInData.Role", (string)responseData.message);
+
+            viewModel.RoleList = await _userServices.GetRoleList();
+            return View(viewModel);
         }
-        public IActionResult RegisertUser()
+
+        public async Task<IActionResult> RegisterUser()
         {
-            return View();
+            var model = new RegisterViewModel
+            {
+                RoleList = await _userServices.GetRoleList()
+            };
+            return View(model);
         }
+
         [HttpPost]
-        public async Task<IActionResult> RegisertUser(SignInApplicationUserDto formData)
+        public async Task<IActionResult> RegisterUser(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View(formData);
+                model.RoleList = await _userServices.GetRoleList();
+                return View(model);
             }
-            var loginResponse = await _userServices.SignInResponse(formData);
+
+            var loginResponse = await _userServices.SignInResponse(model.RegisterModel);
             var responseData = JsonConvert.DeserializeObject<dynamic>(loginResponse);
+
             if (responseData != null && responseData.token != null)
             {
                 if (responseData.message == "Login successful")
@@ -82,10 +99,13 @@ namespace EmployeeManagement.Mvc.Controllers
             }
             else
             {
-                ViewData["ErrorMessage"] = "UserName or password incorrect";
+                ModelState.AddModelError("RoleList.Role", (string)responseData.message);
             }
-            return View(formData);
+
+            model.RoleList = await _userServices.GetRoleList();
+            return RedirectToAction("LogInPage");
         }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

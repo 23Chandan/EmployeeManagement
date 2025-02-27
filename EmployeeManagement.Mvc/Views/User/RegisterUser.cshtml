@@ -1,16 +1,13 @@
-﻿@model EmployeeManagement.Mvc.Models.LogInViewModel
-
+﻿@model EmployeeManagement.Mvc.Models.RegisterViewModel
 @{
     Layout = null;
 }
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-
+    <title>Employee Details Form</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
@@ -35,63 +32,49 @@
             font-weight: 800;
         }
 
-        .text-danger {
+        ul.text-danger {
             list-style-type: none;
             padding-left: 0;
         }
     </style>
-</head>
 
+</head>
 <body>
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h4>Log In Here</h4>
+                <h4>Sign In Here</h4>
             </div>
             <div class="card-body">
-                <form asp-action="LogInPage" method="post">
+                <form asp-action="RegisterUser" method="post">
                     <div class="form-group">
-                        <input asp-for="LogInData.Email" class="form-control" placeholder="Enter Email">
-                        <span asp-validation-for="LogInData.Email" class="text-danger"></span>
+                        <input class="form-control" asp-for="RegisterModel.Email" placeholder="Enter UserName">
+                        <span asp-validation-for="RegisterModel.Email" class="text-danger"></span>
                     </div>
-
                     <div class="form-group">
-                        <input asp-for="LogInData.Password" class="form-control" type="password" placeholder="Enter Password">
-                        <span asp-validation-for="LogInData.Password" class="text-danger"></span>
+                        <input class="form-control" asp-for="RegisterModel.Password" type="password" placeholder="Enter Password">
+                        <span asp-validation-for="RegisterModel.Password" class="text-danger"></span>
                     </div>
-
                     <div class="form-group">
-                        <select asp-for="LogInData.Role" class="form-control">
+                        <select class="form-control" asp-for="RegisterModel.Role">
                             <option value="">Select Role</option>
                             @foreach (var role in Model.RoleList)
                             {
                                 <option value="@role.Name">@role.Name</option>
                             }
                         </select>
-                        <span asp-validation-for="LogInData.Role" class="text-danger"></span>
+                        <span asp-validation-for="RegisterModel.Role" class="text-danger"></span>
                     </div>
-
-                    @* @if (ViewData["ErrorMessage"] != null)
-                    {
-                        <div class="form-group text-danger">@ViewData["ErrorMessage"]</div>
-                    } *@
-
                     <div class="form-group">
-                        <input asp-for="LogInData.RememberMe" type="checkbox" /> Remember me
+                        <button class="btn btn-primary btn-block" type="submit">Sign In</button>
                     </div>
-
-                    <div class="form-group">
-                        <button class="btn btn-primary btn-block" type="submit">Log In</button>
-                    </div>
-
-                    <a asp-controller="User" asp-action="RegisterUser" class="btn btn-primary btn-block">Sign Up</a>
                 </form>
             </div>
         </div>
     </div>
 
-    @* Enable client-side validation *@
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <!-- Client-side validation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>

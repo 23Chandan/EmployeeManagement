@@ -14,7 +14,7 @@
             <th>State</th>
             <th>Zip</th>
             <th>Joining Date</th>
-            <th>Edit</th>
+            <th style="display: @(userRole == "Admin" ? "block" : "none");">Edit</th>
             <th style="display: @(userRole == "Admin" ? "block" : "none");">Delete</th>
         </tr>
     </thead>
@@ -30,7 +30,7 @@
                 <td>@employee.State</td>
                 <td>@employee.Zip</td>
                 <td>@employee.JoiningDate.ToShortDateString()</td>
-                <td><a asp-controller="Employee" asp-action="GetEmployeeById" asp-route-Id="@employee.Id">Edit</a></td>
+                <td><a asp-controller="Employee" asp-action="GetEmployeeById" asp-route-Id="@employee.Id" style="display: @(userRole == "Admin" ? "block" : "none");">Edit</a></td>
                 <td><a asp-controller="Employee" asp-action="DeleteEmployee" asp-route-Id="@employee.Id" style="display: @(userRole == "Admin" ? "block" : "none");">Delete</a></td>
             </tr>
         }
